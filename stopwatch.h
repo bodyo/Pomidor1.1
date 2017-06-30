@@ -9,7 +9,7 @@ class Stopwatch
 public:
     Stopwatch();
     void start(int micro);
-    void stop();
+    void pause();
     void reset();
 
     int elapsed();

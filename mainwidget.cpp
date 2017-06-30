@@ -54,15 +54,11 @@ void MainWidget::_onStartButton()
 void MainWidget::_onStopButton()
 {
     stopwatch.reset();
-//    _timeDisplay->display(QTime::fromMSecsSinceStartOfDay(QRstopwatch.stop()));
-//    stopwatch.reset();
 }
 
 void MainWidget::_onPauseButton()
 {
-    stopwatch.stop();
-//    _timer->stop();
-//    _timeDisplay->display(QTime::fromMSecsSinceStartOfDay(stopwatch.stop()).toString());
+    stopwatch.pause();
 }
 
 void MainWidget::setUiFields()

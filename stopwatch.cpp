@@ -18,9 +18,10 @@ void Stopwatch::start(int micro)
     stopTime = 0;
 }
 
-void Stopwatch::stop()
+void Stopwatch::pause()
 {
-    stopTime = timer.remainingTime();
+    if (timer.remainingTime() > 0)
+        stopTime = timer.remainingTime();
     timer.stop();
 }
 
