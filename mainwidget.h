@@ -9,6 +9,8 @@ QT_FORWARD_DECLARE_CLASS(QPushButton);
 QT_FORWARD_DECLARE_CLASS(QLCDNumber);
 QT_FORWARD_DECLARE_CLASS(QTimer);
 QT_FORWARD_DECLARE_CLASS(QTime);
+QT_FORWARD_DECLARE_CLASS(QwtScaleWidget)
+//#include <qwt_scale_widget.h>
 
 namespace Ui {
 class MainWidget;
@@ -38,6 +40,7 @@ private:
 
     std::unique_ptr<QLCDNumber> _timeDisplay;
     std::unique_ptr<QTimer> _timer;
+    std::unique_ptr<QwtScaleWidget> _timeScale;
     Stopwatch stopwatch;
 };
 

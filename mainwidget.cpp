@@ -7,6 +7,14 @@
 #include <QTimer>
 #include <QTime>
 #include <QDebug>
+#include <qwt_scale_widget.h>
+#include <qwt_scale_draw.h>
+#include <qwt_scale_engine.h>
+#include <qwt_interval.h>
+#include <qwt_color_map.h>
+#include <qwt_scale_div.h>
+#include <QList>
+#include <qwt_interval.h>
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -19,6 +27,11 @@ MainWidget::MainWidget(QWidget *parent) :
 
     _timeDisplay.reset(new QLCDNumber(this));
     _timer.reset(new QTimer(_timeDisplay.get()));
+    _timeScale.reset(new QwtScaleWidget(QwtScaleDraw::BottomScale, this));
+
+    QwtInterval interval(0, 40);
+    QwtLinearScaleEngine se;
+    _timeScale->setScaleDiv(se.divideScale(interval.minValue(), interval.maxValue()-20, 10, 5)); // as in QwtPlot::Axis
 
     connect(_timer.get(), SIGNAL(timeout()), SLOT(_onShowTime()));
     connect(_startButton, SIGNAL(pressed()), SLOT(_onStartButton()));
@@ -65,6 +78,7 @@ void MainWidget::setUiFields()
 {
     QBoxLayout *lcdLayout = new QBoxLayout(QBoxLayout::Down);
     lcdLayout->addWidget(_timeDisplay.get());
+    lcdLayout->addWidget(_timeScale.get());
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
 
     layout->addWidget(_stopButton, 1);

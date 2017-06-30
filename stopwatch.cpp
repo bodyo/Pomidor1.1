@@ -36,8 +36,3 @@ int Stopwatch::elapsed()
 {
     return (stopTime == 0 && timer.remainingTime() != -1) ? timer.remainingTime() : stopTime;
 }
-
-//QString Stopwatch::toString()
-//{
-//    return elapsed()
-//}
