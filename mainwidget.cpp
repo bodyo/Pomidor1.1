@@ -7,14 +7,7 @@
 #include <QTimer>
 #include <QTime>
 #include <QDebug>
-#include <qwt_scale_widget.h>
-#include <qwt_scale_draw.h>
-#include <qwt_scale_engine.h>
-#include <qwt_interval.h>
-#include <qwt_color_map.h>
-#include <qwt_scale_div.h>
-#include <QList>
-#include <qwt_interval.h>
+#include "timescalewidget.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -27,17 +20,17 @@ MainWidget::MainWidget(QWidget *parent) :
 
     _timeDisplay.reset(new QLCDNumber(this));
     _timer.reset(new QTimer(_timeDisplay.get()));
-    _timeScale.reset(new QwtScaleWidget(QwtScaleDraw::BottomScale, this));
+    _timeScale.reset(new TimeScaleWidget(this));
 
-    QwtInterval interval(0, 40);
-    QwtLinearScaleEngine se;
-    _timeScale->setScaleDiv(se.divideScale(interval.minValue(), interval.maxValue()-20, 10, 5)); // as in QwtPlot::Axis
+//    QwtInterval interval(0, 10);
+//    QwtLinearScaleEngine se;
+//    _timeScale->setScaleDiv(se.divideScale(interval.minValue(), interval.maxValue(), 10, 5)); // as in QwtPlot::Axis
+//    _timeScale->setBorderDist(300, 8);
 
     connect(_timer.get(), SIGNAL(timeout()), SLOT(_onShowTime()));
     connect(_startButton, SIGNAL(pressed()), SLOT(_onStartButton()));
     connect(_stopButton, SIGNAL(pressed()), SLOT(_onStopButton()));
     connect(_pauseButton, SIGNAL(pressed()), SLOT(_onPauseButton()));
-    _timer->start(100);
 
     _timeDisplay->display("00:00");
 
@@ -59,6 +52,7 @@ void MainWidget::_onShowTime()
 
 void MainWidget::_onStartButton()
 {
+    _timer->start(100);
     stopwatch.start(6000);
 
     _onShowTime();
@@ -67,11 +61,14 @@ void MainWidget::_onStartButton()
 void MainWidget::_onStopButton()
 {
     stopwatch.reset();
+
+//    _timer->stop();
 }
 
 void MainWidget::_onPauseButton()
 {
     stopwatch.pause();
+//    _timer->stop'
 }
 
 void MainWidget::setUiFields()
