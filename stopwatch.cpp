@@ -1,15 +1,16 @@
 #include "stopwatch.h"
 #include <QTime>
+#include <QWidget>
 
 Stopwatch::Stopwatch()
     : startTime{0}, stopTime{0}
 {
     timer.setSingleShot(true);
-    timer.start();
 }
 
 void Stopwatch::start(int micro)
 {
+    timer.start();
     startTime = micro;
     if (stopTime)
         timer.start(stopTime);
@@ -31,6 +32,16 @@ void Stopwatch::reset()
     stopTime = 0;
     timer.stop();
 }
+
+const QTimer &Stopwatch::getTimer()
+{
+    return timer;
+}
+
+//bool Stopwatch::isAlive()
+//{
+//    return timer.isActive();
+//}
 
 int Stopwatch::elapsed()
 {

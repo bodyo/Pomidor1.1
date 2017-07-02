@@ -1,43 +1,69 @@
-#include "timescalewidget.h"
-#include <qwt_scale_engine.h>
-#include <QPainter>
-#include <QWidget>
-#include <QStyleOption>
-#include <QPaintEvent>
-TimeScaleWidget::TimeScaleWidget(QWidget *parent) :
-    QwtScaleWidget(parent)
-{
-    setAlignment(QwtScaleDraw::BottomScale);
-    QwtInterval interval(0, 10);
-    QwtLinearScaleEngine se;
-    setScaleDiv(se.divideScale(interval.minValue(), interval.maxValue(), 10, 5)); // as in QwtPlot::Axis
-    setBorderDist(289, 7);
-}
+//#include "timescalewidget.h"
+//#include <qwt_scale_engine.h>
+//#include <QPainter>
+//#include <QWidget>
+//#include <QStyleOption>
+//#include <QPaintEvent>
+//TimeScaleWidget::TimeScaleWidget(QWidget *parent) :
+//    QwtScaleWidget(parent)
+//{
+//    setMouseTracking(true);
+//    setAlignment(QwtScaleDraw::BottomScale);
+//    QwtInterval interval(0, 5.9);
+//    QwtLinearScaleEngine se;
+//    setScaleDiv(se.divideScale(interval.minValue(), interval.maxValue(), 9, 10)); // as in QwtPlot::Axis
+//    setBorderDist(289, 7);
 
-void TimeScaleWidget::paintEvent(QPaintEvent *paint)
-{
-    QPainter painter( this );
-    painter.setClipRegion( paint->region() );
+////    qDebug() << parent->size().width();
+//    flag = true;
+//}
 
-    QStyleOption opt;
-    opt.init(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
+//void TimeScaleWidget::paintEvent(QPaintEvent *paint)
+//{
+//    if (flag)
+//    {
+//        flag = false;
+//        widgetWidth = this->size().width()/2;
+//    }
+//    QPainter painter( this );
+//    painter.setClipRegion(paint->region());
+////    lastPos = this->size().width()/2;
 
-    draw( &painter );
+//    QStyleOption opt;
+//    opt.init(this);
+//    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
-    QPainterPath path;
-    path.moveTo(this->size().width()/2, this->size().height()/3);
-    path.lineTo(QPoint(this->size().width()/2-5, 0));
-    path.lineTo(QPoint(this->size().width()/2+5, 0));
-    path.lineTo(this->size().width()/2, this->size().height()/3);
+//    draw( &painter );
 
-    painter.fillPath(path, QBrush(QColor ("orange")));
-}
+//    QPainterPath path;
+//    path.moveTo(this->size().width()/2, this->size().height()/3);
+//    path.lineTo(QPoint(this->size().width()/2-5, 0));
+//    path.lineTo(QPoint(this->size().width()/2+5, 0));
+//    path.lineTo(this->size().width()/2, this->size().height()/3);
 
-void TimeScaleWidget::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
+//    painter.fillPath(path, QBrush(QColor("orange")));
+//}
 
-    }
-}
+//void TimeScaleWidget::mousePressEvent(QMouseEvent *event)
+//{
+//    if (event->button() == Qt::LeftButton)
+//        firstPos = event->x();
+//}
+
+//void TimeScaleWidget::mouseMoveEvent(QMouseEvent *event)
+//{
+//    qDebug() << event->x();
+//    if ((event->buttons() & Qt::LeftButton) && (event->x() > 0) && (event->x() < this->size().width()))
+//    {
+//        lastPos = firstPos-event->x();
+//        setBorderDist(widgetWidth-lastPos, 7);
+//    }
+//}
+
+//void TimeScaleWidget::mouseReleaseEvent(QMouseEvent *event)
+//{
+//    if (event->button() == Qt::LeftButton)
+//    {
+//        widgetWidth -= lastPos;
+//    }
+//}

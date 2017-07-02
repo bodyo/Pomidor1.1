@@ -11,9 +11,12 @@ public:
     void start(int micro);
     void pause();
     void reset();
+    const QTimer &getTimer();
+//    bool isAlive();
 
     int elapsed();
-
+//signals:
+//    void timeout();
 private:
     QTimer timer;
     int startTime;

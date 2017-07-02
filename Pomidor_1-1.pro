@@ -5,7 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT += multimedia multimediawidgets
+#QT += winextras
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Pomidor_1-1
