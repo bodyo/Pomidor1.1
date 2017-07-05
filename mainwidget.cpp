@@ -7,11 +7,9 @@
 #include <QTimer>
 #include <QTime>
 #include <QDebug>
+#include <QLabel>
 #include <QTimeEdit>
-//#include <QMediaPlayer>
 #include <QtMultimedia/QMediaPlayer>
-//#include <QtMultimediaWidgets>
-//#include "timescalewidget.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -25,20 +23,29 @@ MainWidget::MainWidget(QWidget *parent) :
 
     _timeDisplay.reset(new QLCDNumber(this));
     _timer.reset(new QTimer(_timeDisplay.get()));
-    _timeEdit.reset(new QTimeEdit(this));
+    _workTimeEdit.reset(new QTimeEdit(this));
+    _breakTimeEdit.reset(new QTimeEdit(this));
 
-    _timeEdit->setDisplayFormat("mm:ss");
-    QTime StartTime(0,25,0);
-    _timeEdit->setTime(StartTime);
+    player.reset(new QMediaPlayer);
+    player->setMedia(QUrl::fromLocalFile("/home/bodyo/Downloads/defaultmusic.mp3"));
+    player->setVolume(50);
+
+    _breakTimeEdit->setDisplayFormat("mm:ss");
+    QTime beginTime(0,5,0);
+    _breakTimeEdit->setTime(beginTime);
+
+    _workTimeEdit->setDisplayFormat("mm:ss");
+    beginTime.setHMS(0,25,0);
+    _workTimeEdit->setTime(beginTime);
 
     connect(_timer.get(), &QTimer::timeout, this, &MainWidget::_onShowTime);
     connect(_startButton, &QPushButton::pressed, this, &MainWidget::_onStartButton);
     connect(_stopButton, &QPushButton::pressed, this, &MainWidget::_onStopButton);
     connect(_pauseButton, &QPushButton::pressed, this, &MainWidget::_onPauseButton);
-    connect(_timeEdit.get(), &QTimeEdit::timeChanged, this, &MainWidget::_onSetStartValue);
+    connect(_workTimeEdit.get(), &QTimeEdit::timeChanged, this, &MainWidget::_onSetStartValue);
     connect(&stopwatch.getTimer(), &QTimer::timeout, this, &MainWidget::_onTimerTimeout);
 
-    _timeDisplay->display(StartTime.toString("mm:ss"));
+    _timeDisplay->display(beginTime.toString("mm:ss"));
 
     setUiFields();
 }
@@ -57,13 +64,14 @@ void MainWidget::_onShowTime()
 
 void MainWidget::_onSetStartValue(const QTime &start)
 {
-    _timeDisplay->display(start.toString("mm:ss"));
+    if (!stopwatch.isActive())
+        _timeDisplay->display(start.toString("mm:ss"));
 }
 
 void MainWidget::_onStartButton()
 {
     _timer->start(100);
-    stopwatch.start(_timeEdit->time().msecsSinceStartOfDay());
+    stopwatch.start(_workTimeEdit->time().msecsSinceStartOfDay());
     _onShowTime();
 }
 
@@ -71,6 +79,7 @@ void MainWidget::_onStopButton()
 {
     _timer->stop();
     stopwatch.reset();
+    _onSetStartValue(_workTimeEdit->time());
 }
 
 void MainWidget::_onPauseButton()
@@ -81,23 +90,38 @@ void MainWidget::_onPauseButton()
 
 void MainWidget::_onTimerTimeout()
 {
-    player.reset(new QMediaPlayer);
-    player->setMedia(QUrl::fromLocalFile("/home/bodyo/Downloads/defaultmusic.mp3"));
-    player->setVolume(50);
     player->play();
+    if ((_breakTimeEdit->time() != QTime(0,0,0)) && (stopwatch.getTypeOfTime() != TypeOfTime::Break))
+    {
+        stopwatch.setTypeOfTime(TypeOfTime::Break);
+        stopwatch.start(_breakTimeEdit->time().msecsSinceStartOfDay());
+    }
+    else
+    {
+        stopwatch.setTypeOfTime(TypeOfTime::Work);
+        stopwatch.start(_workTimeEdit->time().msecsSinceStartOfDay());
+    }
 }
 
 void MainWidget::setUiFields()
 {
     QBoxLayout *lcdLayout = new QBoxLayout(QBoxLayout::Down);
+    QBoxLayout *timeSetLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     lcdLayout->addWidget(_timeDisplay.get());
-    lcdLayout->addWidget(_timeEdit.get());
+    QLabel *workLabel(new QLabel("Work:", this));
+    timeSetLayout->addWidget(workLabel, 1);
+    timeSetLayout->addWidget(_workTimeEdit.get(), 4);
+    QLabel *breakLabel(new QLabel("Break:", this));
+    timeSetLayout->addWidget(breakLabel,1);
+    timeSetLayout->addWidget(_breakTimeEdit.get(),4);
+
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
 
     layout->addWidget(_stopButton, 1);
     layout->addWidget(_pauseButton, 1);
     layout->addWidget(_startButton, 2);
 
+    lcdLayout->addLayout(timeSetLayout);
     lcdLayout->addLayout(layout);
 
     setLayout(lcdLayout);

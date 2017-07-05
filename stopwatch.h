@@ -4,6 +4,12 @@
 #include <QString>
 #include <QTimer>
 
+enum class TypeOfTime
+{
+    Work,
+    Break
+};
+
 class Stopwatch
 {
 public:
@@ -12,13 +18,14 @@ public:
     void pause();
     void reset();
     const QTimer &getTimer();
-//    bool isAlive();
+    bool isActive();
+    void setTypeOfTime(TypeOfTime type);
+    TypeOfTime getTypeOfTime();
 
     int elapsed();
-//signals:
-//    void timeout();
 private:
     QTimer timer;
+    TypeOfTime _type;
     int startTime;
     int stopTime;
 };

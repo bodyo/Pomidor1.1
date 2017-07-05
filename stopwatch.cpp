@@ -38,10 +38,20 @@ const QTimer &Stopwatch::getTimer()
     return timer;
 }
 
-//bool Stopwatch::isAlive()
-//{
-//    return timer.isActive();
-//}
+bool Stopwatch::isActive()
+{
+    return timer.isActive();
+}
+
+void Stopwatch::setTypeOfTime(TypeOfTime type)
+{
+    _type = type;
+}
+
+TypeOfTime Stopwatch::getTypeOfTime()
+{
+    return _type;
+}
 
 int Stopwatch::elapsed()
 {

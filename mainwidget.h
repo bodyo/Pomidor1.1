@@ -42,7 +42,8 @@ private:
 
     std::unique_ptr<QLCDNumber> _timeDisplay;
     std::unique_ptr<QTimer> _timer;
-    std::unique_ptr<QTimeEdit> _timeEdit;
+    std::unique_ptr<QTimeEdit> _workTimeEdit;
+    std::unique_ptr<QTimeEdit> _breakTimeEdit;
     std::unique_ptr<QMediaPlayer> player;
     Stopwatch stopwatch;
 };
