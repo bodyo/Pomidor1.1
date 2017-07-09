@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/music">
+        <file>rmusic/BoxingBell.mp3</file>
+    </qresource>
+</RCC>

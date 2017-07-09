@@ -9,7 +9,11 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTimeEdit>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMenu>
 #include <QtMultimedia/QMediaPlayer>
+#include <QFileDialog>
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -20,6 +24,7 @@ MainWidget::MainWidget(QWidget *parent) :
     _startButton = new QPushButton("Start", this);
     _stopButton = new QPushButton("Stop", this);
     _pauseButton = new QPushButton("Pause", this);
+    _menuBar.reset(new QMenuBar(this));
 
     _timeDisplay.reset(new QLCDNumber(this));
     _timer.reset(new QTimer(_timeDisplay.get()));
@@ -27,7 +32,6 @@ MainWidget::MainWidget(QWidget *parent) :
     _breakTimeEdit.reset(new QTimeEdit(this));
 
     player.reset(new QMediaPlayer);
-    player->setMedia(QUrl::fromLocalFile("/home/bodyo/Downloads/defaultmusic.mp3"));
     player->setVolume(50);
 
     _breakTimeEdit->setDisplayFormat("mm:ss");
@@ -58,7 +62,6 @@ MainWidget::~MainWidget()
 void MainWidget::_onShowTime()
 {
     QTime time = QTime::fromMSecsSinceStartOfDay(stopwatch.elapsed());
-
     _timeDisplay->display(time.toString("mm:ss"));
 }
 
@@ -72,6 +75,8 @@ void MainWidget::_onStartButton()
 {
     _timer->start(100);
     stopwatch.start(_workTimeEdit->time().msecsSinceStartOfDay());
+    player->setMedia(QUrl(songsKeeper.firstStartWorkSong));
+    player->play();
     _onShowTime();
 }
 
@@ -93,30 +98,76 @@ void MainWidget::_onTimerTimeout()
     player->play();
     if ((_breakTimeEdit->time() != QTime(0,0,0)) && (stopwatch.getTypeOfTime() != TypeOfTime::Break))
     {
+        player->setMedia(QUrl(songsKeeper.endWorkSong));
+        player->play();
         stopwatch.setTypeOfTime(TypeOfTime::Break);
         stopwatch.start(_breakTimeEdit->time().msecsSinceStartOfDay());
     }
     else
     {
+        player->setMedia(QUrl(songsKeeper.firstStartWorkSong));
+        player->play();
         stopwatch.setTypeOfTime(TypeOfTime::Work);
         stopwatch.start(_workTimeEdit->time().msecsSinceStartOfDay());
     }
 }
 
+void MainWidget::_onPathToFirstStartWorkMusicChanged()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Open Music", "/home", tr("Music files (*.mp3 *.aac *.flac)"));
+    songsKeeper.firstStartWorkSong = filePath;
+}
+
+void MainWidget::_onPathToEndWorkMusicChanged()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Open Music", "/home", tr("Music files (*.mp3 *.aac *.flac)"));
+    songsKeeper.endWorkSong = filePath;
+}
+
+void MainWidget::_onPathToEndBreakMusicChanged()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Open Music", "/home", tr("Music files (*.mp3 *.aac *.flac)"));
+    songsKeeper.endBreakSong = filePath;
+}
+
+void MainWidget::createMenuBarActions()
+{
+    QMenu *menuFile = new QMenu("&Music", _menuBar.get());
+
+    QAction *firstStartWorkMusic = new QAction("Change first start work music", _menuBar.get());
+    QAction *endWorkMusic = new QAction("Change end work music", _menuBar.get());
+    QAction *endBreakMusic = new QAction("Change end break music", _menuBar.get());
+
+    menuFile->addAction(firstStartWorkMusic);
+    menuFile->addAction(endWorkMusic);
+    menuFile->addAction(endBreakMusic);
+
+    _menuBar->addMenu(menuFile);
+    this->layout()->setMenuBar(_menuBar.get());
+
+    connect(firstStartWorkMusic, &QAction::triggered, this, &MainWidget::_onPathToFirstStartWorkMusicChanged);
+    connect(endWorkMusic, &QAction::triggered, this, &MainWidget::_onPathToEndWorkMusicChanged);
+    connect(endBreakMusic, &QAction::triggered, this, &MainWidget::_onPathToEndBreakMusicChanged);
+}
+
 void MainWidget::setUiFields()
 {
-    QBoxLayout *lcdLayout = new QBoxLayout(QBoxLayout::Down);
+    QBoxLayout *lcdLayout = new QBoxLayout(QBoxLayout::Down, this);
     QBoxLayout *timeSetLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+
     lcdLayout->addWidget(_timeDisplay.get());
-    QLabel *workLabel(new QLabel("Work:", this));
+
+    createMenuBarActions();
+
+    QLabel *workLabel(new QLabel("Work:", this)); 
     timeSetLayout->addWidget(workLabel, 1);
     timeSetLayout->addWidget(_workTimeEdit.get(), 4);
+
     QLabel *breakLabel(new QLabel("Break:", this));
     timeSetLayout->addWidget(breakLabel,1);
     timeSetLayout->addWidget(_breakTimeEdit.get(),4);
 
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
-
     layout->addWidget(_stopButton, 1);
     layout->addWidget(_pauseButton, 1);
     layout->addWidget(_startButton, 2);

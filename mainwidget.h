@@ -5,12 +5,15 @@
 #include <QElapsedTimer>
 #include <memory>
 #include "stopwatch.h"
+#include "songskeeper.h"
 QT_FORWARD_DECLARE_CLASS(QPushButton);
 QT_FORWARD_DECLARE_CLASS(QLCDNumber);
 QT_FORWARD_DECLARE_CLASS(QTimer);
 QT_FORWARD_DECLARE_CLASS(QTime);
 QT_FORWARD_DECLARE_CLASS(QTimeEdit)
 QT_FORWARD_DECLARE_CLASS(QMediaPlayer)
+class QMenuBar;
+class QMenu;
 
 namespace Ui {
 class MainWidget;
@@ -31,8 +34,12 @@ private slots:
     void _onStopButton();
     void _onPauseButton();
     void _onTimerTimeout();
+    void _onPathToFirstStartWorkMusicChanged();
+    void _onPathToEndWorkMusicChanged();
+    void _onPathToEndBreakMusicChanged();
 
 private:
+    void createMenuBarActions();
     void setUiFields();
     Ui::MainWidget *ui;
 
@@ -45,6 +52,9 @@ private:
     std::unique_ptr<QTimeEdit> _workTimeEdit;
     std::unique_ptr<QTimeEdit> _breakTimeEdit;
     std::unique_ptr<QMediaPlayer> player;
+    std::unique_ptr<QMenuBar> _menuBar;
+    std::unique_ptr<QMenu> _musicMenu;
+    SongsKeeper songsKeeper;
     Stopwatch stopwatch;
 };
 

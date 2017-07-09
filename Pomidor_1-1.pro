@@ -22,6 +22,10 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwidget.h \
     stopwatch.h \
-    timescalewidget.h
+    timescalewidget.h \
+    songskeeper.h
 
 FORMS    += mainwidget.ui
+
+RESOURCES += \
+    resources.qrc
